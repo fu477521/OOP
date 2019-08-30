@@ -2,7 +2,7 @@
 import time
 import concurrent.futures
 
-from .Wheel_game import json_get
+from wheel_game_12.Wheel_game import json_get, roulette_server
 
 
 with concurrent.futures.ProcessPoolExecutor() as executor:
