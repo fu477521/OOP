@@ -2,9 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Notebook</title>
+    <!--图标和样式表-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <!--<link rel="stylesheet" href="style.css" />-->
 </head>
 <body>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/marked"></script>
+    <div id="notebook">
+        <section class="main">
+            <textarea v-model="content"></textarea>
+        </section>
+        <aside class="preview" v-html="notePreview">
+            {{ notePreview }}
+        </aside>
+    </div>
 
+    <script src="script.js"></script>
 </body>
 </html>
