@@ -3,6 +3,7 @@ from collections.abc import Callable
 
 
 class Wheel(Callable):
+    """可回调的类"""
     def __init__(self):
         self.rng = random.Random()
         self.bins = [
@@ -87,6 +88,7 @@ def wheel(environ, start_response):
 
 
 class Wheel00(Callable):
+    """轮盘选择"""
     def __init__(self):
         self.am = American()
         self.eu = European()
@@ -103,22 +105,24 @@ class Wheel00(Callable):
         return response
 
 
-# 启动服务器的演示版本
-from wsgiref.simple_server import make_server
-
-def roulette_server(count=1):
-    # 创建服务器对象，这个对象会回调wheel()处理请求。
-    httpd = make_server('', 8080, wheel)  #
-    if count is None:
-        httpd.serve_forever()
-    else:
-        for c in range(count):
-            httpd.handle_request()
+# # 启动服务器的演示版本
+# from wsgiref.simple_server import make_server
+#
+#
+# def roulette_server(count=1):
+#     # 创建服务器对象，这个对象会回调wheel()处理请求。
+#     httpd = make_server('', 8080, wheel)  #
+#     if count is None:
+#         httpd.serve_forever()
+#     else:
+#         for c in range(count):
+#             httpd.handle_request()
 
 
 # 实现REST客户端
 import http.client
 import json
+
 
 def json_get(path="/"):
     rest = http.client.HTTPConnection('localhost', 8080)
@@ -133,9 +137,38 @@ def json_get(path="/"):
     else:
         print(raw)
 
+##################################
+# 多层REST服务
+##################################
+
+
+from collections import defaultdict
+
+class Table:
+    def __init__(self, stake=100):
+        self.bets = defaultdict(int)
+        self.stake = stake
+
+    def place_bet(self, name, amount):
+        self.bets[name] += amount
+
+    def clear_bets(self, name):
+        self.bets = defaultdict(int)
+
+    def resolve(self, spin):
+        """spin is a dict with bet:(x:y)."""
+        details = []
+        while self.bets:
+            bet, amount = self.bets.popitem()
+            if bet in spin:
+                x, y = spin[bet]
+                self.stake += amount * x/y
+                details.append((bet, amount, 'win'))
+            else:
+                self.stake -= amount
+                details.append((bet, amount, 'lose'))
+        return details
 
 
 
 
-if __name__ == '__main__':
-    roulette_server()
